@@ -1,10 +1,11 @@
-
 .vscode/
+data/**
+output/
+tags
 *.pyc
 *.pth
 *.tar
 *.dat
 *.txt
 *.h5
-
 
