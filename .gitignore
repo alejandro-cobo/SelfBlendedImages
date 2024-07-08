@@ -2,6 +2,7 @@
 data/**
 output/
 tags
+src/utils/library/
 *.pyc
 *.pth
 *.tar

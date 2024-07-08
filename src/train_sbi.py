@@ -59,7 +59,7 @@ def main(args):
         worker_init_fn=val_dataset.worker_init_fn,
     )
 
-    model = Detector()
+    model = Detector(cfg["model"])
     model = model.to("cuda")
 
     iter_loss = []
@@ -182,7 +182,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(dest="config")
-    parser.add_argument("-n", dest="session_name")
+    parser.add_argument("config", type=str)
+    parser.add_argument("-n", dest="session_name", type=str)
     args = parser.parse_args()
     main(args)

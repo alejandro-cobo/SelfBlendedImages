@@ -1,8 +1,8 @@
 import torch
 from torch import nn
 from efficientnet_pytorch import EfficientNet
-from .farl import FARL_PRETRAIN_PATH, load_farl
-from .utils.sam import SAM
+from farl import FARL_PRETRAIN_PATH, load_farl
+from utils.sam import SAM
 
 
 class Detector(nn.Module):

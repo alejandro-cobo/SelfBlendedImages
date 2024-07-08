@@ -1,0 +1,6 @@
+{
+    "model": "farl",
+    "epoch": 1,
+    "batch_size": 2,
+    "image_size": 224
+}
