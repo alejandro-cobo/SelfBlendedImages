@@ -21,8 +21,9 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-if os.path.isfile("/app/src/utils/library/bi_online_generation.py"):
-    sys.path.append("/app/src/utils/library/")
+ROOT_PATH = __file__.split('src/utils/sbi.py')[0]
+if os.path.isfile(os.path.join(ROOT_PATH, "src/utils/library/bi_online_generation.py")):
+    sys.path.append(os.path.join(ROOT_PATH, "src/utils/library/"))
     print("exist library")
     exist_bi = True
 else:
@@ -337,7 +338,7 @@ class SBI_Dataset(Dataset):
 
 if __name__ == "__main__":
     import blend as B
-    from initialize import *
+    from initialize import init_ff
     from funcs import IoUfrom2bboxes, crop_face, RandomDownScale
 
     if exist_bi:
@@ -366,7 +367,7 @@ if __name__ == "__main__":
     utils.save_image(img, "loader.png", nrow=batch_size, normalize=False, range=(0, 1))
 else:
     from utils import blend as B
-    from .initialize import *
+    from .initialize import init_ff
     from .funcs import IoUfrom2bboxes, crop_face, RandomDownScale
 
     if exist_bi:

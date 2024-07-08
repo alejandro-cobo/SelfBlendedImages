@@ -1,18 +1,23 @@
 import torch
 from torch import nn
-import torchvision
-from torch.nn import functional as F
 from efficientnet_pytorch import EfficientNet
-from utils.sam import SAM
+from .farl import FARL_PRETRAIN_PATH, load_farl
+from .utils.sam import SAM
 
 
 class Detector(nn.Module):
-
-    def __init__(self):
+    def __init__(self, name='efficientnet'):
         super(Detector, self).__init__()
-        self.net = EfficientNet.from_pretrained(
-            "efficientnet-b4", advprop=True, num_classes=2
-        )
+        self.name = name
+        if name == 'efficientnet':
+            self.net = EfficientNet.from_pretrained(
+                "efficientnet-b4", advprop=True, num_classes=2
+            )
+        elif name == 'farl':
+            farl = load_farl('base', FARL_PRETRAIN_PATH)
+            self.net = nn.Sequential(farl, nn.Linear(farl.output_dim, 2))
+        else:
+            raise ValueError(name)
         self.cel = nn.CrossEntropyLoss()
         self.optimizer = SAM(self.parameters(), torch.optim.SGD, lr=0.001, momentum=0.9)
 

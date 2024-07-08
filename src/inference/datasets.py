@@ -1,11 +1,6 @@
 from glob import glob
 import os
-import sys
 import json
-import numpy as np
-from PIL import Image
-from glob import glob
-import os
 import pandas as pd
 
 
@@ -97,10 +92,10 @@ def init_dfdcp(phase="test"):
 def init_ffiw():
     # assert dataset in ['real','fake']
     path = "data/FFIW/FFIW10K-v1-release/"
-    folder_list = sorted(glob(path + "source/val/videos/*.mp4")) + sorted(
-        glob(path + "target/val/videos/*.mp4")
-    )
-    label_list = [0] * 250 + [1] * 250
+    real_list = sorted(glob(path + "source/test/videos/*.mp4"))
+    fake_list = sorted(glob(path + "target/test/videos/*.mp4"))
+    label_list = [0] * len(real_list) + [1] * fake_list
+    folder_list = real_list + fake_list
     return folder_list, label_list
 
 

@@ -1,25 +1,13 @@
-import os
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torchvision import datasets, transforms, models, utils
 import numpy as np
-import matplotlib.pyplot as plt
-import os
-import pandas as pd
-from PIL import Image
-import sys
 import random
-import shutil
 from model import Detector
 import argparse
-from datetime import datetime
 from tqdm import tqdm
 from retinaface.pre_trained_models import get_model
 from preprocess import extract_frames
-from datasets import *
-from sklearn.metrics import confusion_matrix, roc_auc_score
+from datasets import init_cdf, init_dfd, init_dfdc, init_dfdcp, init_ff, init_ffiw
+from sklearn.metrics import roc_auc_score
 import warnings
 
 warnings.filterwarnings("ignore")
