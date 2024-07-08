@@ -1,10 +1,6 @@
-import sys
 import json
-import numpy as np
 from PIL import Image
-from glob import glob
-import os
-import pandas as pd
+import numpy as np
 import albumentations as alb
 import cv2
 
@@ -40,62 +36,29 @@ def crop_face(
     img,
     landmark=None,
     bbox=None,
-    margin=False,
-    crop_by_bbox=True,
-    abs_coord=False,
-    only_img=False,
+    bbox_scale=1.3,
     phase="train",
 ):
-    assert phase in ["train", "val", "test"]
+    assert bbox is not None or landmark is not None
 
-    # crop face------------------------------------------
-    H, W = len(img), len(img[0])
-
-    assert landmark is not None or bbox is not None
-
-    H, W = len(img), len(img[0])
-
-    if crop_by_bbox:
+    if bbox is not None:
         x0, y0 = bbox[0]
         x1, y1 = bbox[1]
-        w = x1 - x0
-        h = y1 - y0
-        w0_margin = w / 4  # 0#np.random.rand()*(w/8)
-        w1_margin = w / 4
-        h0_margin = h / 4  # 0#np.random.rand()*(h/5)
-        h1_margin = h / 4
     else:
         x0, y0 = landmark[:68, 0].min(), landmark[:68, 1].min()
         x1, y1 = landmark[:68, 0].max(), landmark[:68, 1].max()
-        w = x1 - x0
-        h = y1 - y0
-        w0_margin = w / 8  # 0#np.random.rand()*(w/8)
-        w1_margin = w / 8
-        h0_margin = h / 2  # 0#np.random.rand()*(h/5)
-        h1_margin = h / 5
 
-    if margin:
-        w0_margin *= 4
-        w1_margin *= 4
-        h0_margin *= 2
-        h1_margin *= 2
-    elif phase == "train":
-        w0_margin *= np.random.rand() * 0.6 + 0.2  # np.random.rand()
-        w1_margin *= np.random.rand() * 0.6 + 0.2  # np.random.rand()
-        h0_margin *= np.random.rand() * 0.6 + 0.2  # np.random.rand()
-        h1_margin *= np.random.rand() * 0.6 + 0.2  # np.random.rand()
-    else:
-        w0_margin *= 0.5
-        w1_margin *= 0.5
-        h0_margin *= 0.5
-        h1_margin *= 0.5
+    w = x1 - x0
+    h = y1 - y0
+    center_x = x0 + w / 2
+    center_y = y0 + h / 2
+    side = max(w, h) * bbox_scale
+    x0_new = int(center_x - side / 2)
+    x1_new = int(center_x + side / 2)
+    y0_new = int(center_y - side / 2)
+    y1_new = int(center_y + side / 2)
 
-    y0_new = max(0, int(y0 - h0_margin))
-    y1_new = min(H, int(y1 + h1_margin) + 1)
-    x0_new = max(0, int(x0 - w0_margin))
-    x1_new = min(W, int(x1 + w1_margin) + 1)
-
-    img_cropped = img[y0_new:y1_new, x0_new:x1_new]
+    img_cropped = np.array(Image.fromarray(img).crop((x0_new, y0_new, x1_new, y1_new)))
     if landmark is not None:
         landmark_cropped = np.zeros_like(landmark)
         for i, (p, q) in enumerate(landmark):
@@ -109,26 +72,7 @@ def crop_face(
     else:
         bbox_cropped = None
 
-    if only_img:
-        return img_cropped
-    if abs_coord:
-        return (
-            img_cropped,
-            landmark_cropped,
-            bbox_cropped,
-            (y0 - y0_new, x0 - x0_new, y1_new - y1, x1_new - x1),
-            y0_new,
-            y1_new,
-            x0_new,
-            x1_new,
-        )
-    else:
-        return (
-            img_cropped,
-            landmark_cropped,
-            bbox_cropped,
-            (y0 - y0_new, x0 - x0_new, y1_new - y1, x1_new - x1),
-        )
+    return img_cropped, landmark_cropped, bbox_cropped
 
 
 class RandomDownScale(alb.core.transforms_interface.ImageOnlyTransform):
@@ -136,7 +80,6 @@ class RandomDownScale(alb.core.transforms_interface.ImageOnlyTransform):
         return self.randomdownscale(img)
 
     def randomdownscale(self, img):
-        keep_ratio = True
         keep_input_shape = True
         H, W, C = img.shape
         ratio_list = [2, 4]

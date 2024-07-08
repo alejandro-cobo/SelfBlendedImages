@@ -6,11 +6,7 @@
 
 import cv2
 import numpy as np
-import scipy as sp
-from skimage.measure import label, regionprops
 import random
-from PIL import Image
-import sys
 
 
 def alpha_blend(source, target, mask):
@@ -50,14 +46,10 @@ def get_blend_mask(mask):
 
 def get_alpha_blend_mask(mask):
     kernel_list = [(11, 11), (9, 9), (7, 7), (5, 5), (3, 3)]
-    blend_list = [0.25, 0.5, 0.75]
     kernel_idxs = random.choices(range(len(kernel_list)), k=2)
-    blend_ratio = blend_list[random.sample(range(len(blend_list)), 1)[0]]
     mask_blured = cv2.GaussianBlur(mask, kernel_list[0], 0)
-    # print(mask_blured.max())
     mask_blured[mask_blured < mask_blured.max()] = 0
     mask_blured[mask_blured > 0] = 1
-    # mask_blured = mask
     mask_blured = cv2.GaussianBlur(mask_blured, kernel_list[kernel_idxs[1]], 0)
     mask_blured = mask_blured / (mask_blured.max())
     return mask_blured.reshape((mask_blured.shape + (1,)))

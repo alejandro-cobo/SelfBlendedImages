@@ -61,9 +61,6 @@ def init_dfdcp(phase="test"):
 
     phase_integrated = {"train": "train", "val": "train", "test": "test"}
 
-    all_img_list = []
-    all_label_list = []
-
     with open("data/DFDCP/dataset.json") as f:
         df = json.load(f)
     fol_lab_list_all = [
@@ -100,8 +97,6 @@ def init_ffiw():
 
 
 def init_cdf():
-
-    image_list = []
     label_list = []
 
     video_list_txt = "data/Celeb-DF-v2/List_of_testing_videos.txt"
@@ -109,9 +104,7 @@ def init_cdf():
 
         folder_list = []
         for data in f:
-            # print(data)
             line = data.split()
-            # print(line)
             path = line[1].split("/")
             folder_list += ["data/Celeb-DF-v2/" + path[0] + "/videos/" + path[1]]
             label_list += [1 - int(line[0])]

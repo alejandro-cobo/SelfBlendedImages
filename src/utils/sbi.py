@@ -5,11 +5,9 @@
 # 3rd party softwares' licenses are noticed at https://github.com/mapooon/SelfBlendedImages/blob/master/LICENSE
 
 import torch
-from torchvision import utils
 from torch.utils.data import Dataset
 import os
 import numpy as np
-from PIL import Image
 import random
 import cv2
 import sys
@@ -78,7 +76,8 @@ class SBI_Dataset(Dataset):
         while flag:
             try:
                 filename = self.image_list[idx]
-                img = np.array(Image.open(filename))
+                img = cv2.imread(filename)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 landmark = np.load(
                     filename.replace(".png", ".npy").replace("/frames/", self.path_lm)
                 )[0]
@@ -105,10 +104,7 @@ class SBI_Dataset(Dataset):
                     if np.random.rand() < 0.5:
                         img, _, landmark, bbox = self.hflip(img, None, landmark, bbox)
 
-                img, landmark, bbox, __ = crop_face(
-                    img, landmark, bbox, margin=True, crop_by_bbox=False
-                )
-
+                img, landmark, bbox = crop_face(img, landmark, bbox, bbox_scale=1.3)
                 img_r, img_f, mask_f = self.self_blending(img.copy(), landmark.copy())
 
                 if self.phase == "train":
@@ -118,18 +114,7 @@ class SBI_Dataset(Dataset):
                     img_f = transformed["image"]
                     img_r = transformed["image1"]
 
-                img_f, _, __, ___, y0_new, y1_new, x0_new, x1_new = crop_face(
-                    img_f,
-                    landmark,
-                    bbox,
-                    margin=False,
-                    crop_by_bbox=True,
-                    abs_coord=True,
-                    phase=self.phase,
-                )
-
-                img_r = img_r[y0_new:y1_new, x0_new:x1_new]
-
+                print(img_r.shape, img_f.shape)
                 img_f = (
                     cv2.resize(
                         img_f, self.image_size, interpolation=cv2.INTER_LINEAR
@@ -198,7 +183,7 @@ class SBI_Dataset(Dataset):
                 ),
                 alb.ImageCompression(quality_lower=40, quality_upper=100, p=0.5),
             ],
-            additional_targets={f"image1": "image"},
+            additional_targets={"image1": "image"},
             p=1.0,
         )
 
@@ -226,7 +211,6 @@ class SBI_Dataset(Dataset):
         return img, mask
 
     def self_blending(self, img, landmark):
-        H, W = len(img), len(img[0])
         if np.random.rand() < 0.25:
             landmark = landmark[:68]
         if exist_bi:
@@ -350,8 +334,8 @@ if __name__ == "__main__":
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-    image_dataset = SBI_Dataset(phase="test", image_size=256)
-    batch_size = 64
+    image_dataset = SBI_Dataset(phase="train", image_size=256)
+    batch_size = 2
     dataloader = torch.utils.data.DataLoader(
         image_dataset,
         batch_size=batch_size,
@@ -362,9 +346,6 @@ if __name__ == "__main__":
     )
     data_iter = iter(dataloader)
     data = next(data_iter)
-    img = data["img"]
-    img = img.view((-1, 3, 256, 256))
-    utils.save_image(img, "loader.png", nrow=batch_size, normalize=False, range=(0, 1))
 else:
     from utils import blend as B
     from .initialize import init_ff
