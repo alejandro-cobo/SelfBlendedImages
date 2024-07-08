@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore")
 
 def main(args):
 
-    model = Detector()
+    model = Detector(args.model_name)
     model = model.to(device)
     cnn_sd = torch.load(args.weight_name)["model"]
     model.load_state_dict(cnn_sd)
@@ -42,7 +42,7 @@ def main(args):
     output_list = []
     for filename in tqdm(video_list):
         try:
-            face_list, idx_list = extract_frames(filename, args.n_frames, face_detector)
+            face_list, idx_list = extract_frames(filename, args.n_frames, face_detector, (args.image_size, args.image_size))
 
             with torch.no_grad():
                 img = torch.tensor(face_list).to(device).float() / 255
@@ -81,9 +81,11 @@ if __name__ == "__main__":
     device = torch.device("cuda")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-w", dest="weight_name", type=str)
-    parser.add_argument("-d", dest="dataset", type=str)
+    parser.add_argument("model_name", type=str)
+    parser.add_argument("-w", required=True, dest="weight_name", type=str)
+    parser.add_argument("-d", required=True, dest="dataset", type=str)
     parser.add_argument("-n", dest="n_frames", default=32, type=int)
+    parser.add_argument("-i", dest="image_size", default=380, type=int)
     args = parser.parse_args()
 
     main(args)
