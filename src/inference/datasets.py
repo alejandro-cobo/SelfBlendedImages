@@ -91,7 +91,7 @@ def init_ffiw():
     path = "data/FFIW/FFIW10K-v1-release/"
     real_list = sorted(glob(path + "source/test/videos/*.mp4"))
     fake_list = sorted(glob(path + "target/test/videos/*.mp4"))
-    label_list = [0] * len(real_list) + [1] * fake_list
+    label_list = [0] * len(real_list) + [1] * len(fake_list)
     folder_list = real_list + fake_list
     return folder_list, label_list
 

@@ -1,6 +1,8 @@
+import os
+from torch import hub
 from torch import nn
 from efficientnet_pytorch import EfficientNet
-from ..farl import FARL_PRETRAIN_PATH, load_farl
+from facer.farl import load_farl
 
 
 class Detector(nn.Module):
@@ -12,7 +14,12 @@ class Detector(nn.Module):
                 "efficientnet-b4", advprop=True, num_classes=2
             )
         elif name == 'farl':
-            farl = load_farl('base', FARL_PRETRAIN_PATH)
+            weigth_path = os.path.join(hub.get_dir, 'checkpoints', 'FaRL-Base-Patch16-LAIONFace20M-ep64.pth')
+            hub.download_url_to_file(
+                'https://github.com/FacePerceiver/FaRL/releases/download/pretrained_weights/FaRL-Base-Patch16-LAIONFace20M-ep64.pth',
+                weigth_path
+            )
+            farl = load_farl('base', weigth_path)
             self.net = nn.Sequential(farl, nn.Linear(farl.output_dim, 2))
         else:
             raise ValueError(name)

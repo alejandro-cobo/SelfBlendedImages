@@ -1,7 +1,7 @@
 import unittest
 import torch
 
-from src.model import Detector
+from model import Detector
 
 
 class MyTest(unittest.TestCase):

@@ -32,13 +32,7 @@ def IoUfrom2bboxes(boxA, boxB):
     return iou
 
 
-def crop_face(
-    img,
-    landmark=None,
-    bbox=None,
-    bbox_scale=1.3,
-    phase="train",
-):
+def crop_face(img, landmark=None, bbox=None, bbox_scale=1.3):
     assert bbox is not None or landmark is not None
 
     if bbox is not None:
