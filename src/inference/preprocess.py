@@ -10,7 +10,6 @@ def extract_frames(filename, num_frames, model, image_size=(380, 380)):
 
     if not cap_org.isOpened():
         print(f"Cannot open: {filename}")
-        # sys.exit()
         return []
 
     croppedfaces = []

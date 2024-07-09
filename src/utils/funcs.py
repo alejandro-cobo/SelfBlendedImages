@@ -1,10 +1,5 @@
-import sys
 import json
 import numpy as np
-from PIL import Image
-from glob import glob
-import os
-import pandas as pd
 import albumentations as alb
 import cv2
 
@@ -136,7 +131,6 @@ class RandomDownScale(alb.core.transforms_interface.ImageOnlyTransform):
         return self.randomdownscale(img)
 
     def randomdownscale(self, img):
-        keep_ratio = True
         keep_input_shape = True
         H, W, C = img.shape
         ratio_list = [2, 4]

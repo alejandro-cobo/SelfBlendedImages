@@ -78,7 +78,8 @@ class SBI_Dataset(Dataset):
         while flag:
             try:
                 filename = self.image_list[idx]
-                img = np.array(Image.open(filename))
+                img = cv2.imread(filename)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 landmark = np.load(
                     filename.replace(".png", ".npy").replace("/frames/", self.path_lm)
                 )[0]
@@ -198,7 +199,7 @@ class SBI_Dataset(Dataset):
                 ),
                 alb.ImageCompression(quality_lower=40, quality_upper=100, p=0.5),
             ],
-            additional_targets={f"image1": "image"},
+            additional_targets={"image1": "image"},
             p=1.0,
         )
 
