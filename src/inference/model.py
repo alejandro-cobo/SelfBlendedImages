@@ -14,12 +14,13 @@ class Detector(nn.Module):
                 "efficientnet-b4", advprop=True, num_classes=2
             )
         elif name == 'farl':
-            weigth_path = os.path.join(hub.get_dir, 'checkpoints', 'FaRL-Base-Patch16-LAIONFace20M-ep64.pth')
-            hub.download_url_to_file(
-                'https://github.com/FacePerceiver/FaRL/releases/download/pretrained_weights/FaRL-Base-Patch16-LAIONFace20M-ep64.pth',
-                weigth_path
-            )
-            farl = load_farl('base', weigth_path)
+            weights_path = os.path.join(hub.get_dir(), 'checkpoints', 'FaRL-Base-Patch16-LAIONFace20M-ep64.pth')
+            if not os.path.exists(weights_path):
+                hub.download_url_to_file(
+                    'https://github.com/FacePerceiver/FaRL/releases/download/pretrained_weights/FaRL-Base-Patch16-LAIONFace20M-ep64.pth',
+                    weights_path
+                )
+            farl = load_farl('base', weights_path)
             self.net = nn.Sequential(farl, nn.Linear(farl.output_dim, 2))
         else:
             raise ValueError(name)

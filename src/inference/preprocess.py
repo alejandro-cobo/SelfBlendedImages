@@ -50,7 +50,7 @@ def extract_frames(filename, num_frames, model, image_size=(380, 380)):
             for face_idx in range(len(faces)):
                 x0, y0, x1, y1 = faces[face_idx]["bbox"]
                 bbox = np.array([[x0, y0], [x1, y1]])
-                cropped_face, _,  = crop_face(frame, None, bbox, bbox_scale=1.3)
+                cropped_face, _, __ = crop_face(frame, None, bbox, bbox_scale=1.3)
                 croppedfaces_temp.append(cv2.resize(cropped_face, dsize=image_size,).transpose((2, 0, 1)))
                 idx_list_temp.append(cnt_frame)
                 size_list.append((x1 - x0) * (y1 - y0))

@@ -114,7 +114,6 @@ class SBI_Dataset(Dataset):
                     img_f = transformed["image"]
                     img_r = transformed["image1"]
 
-                print(img_r.shape, img_f.shape)
                 img_f = (
                     cv2.resize(
                         img_f, self.image_size, interpolation=cv2.INTER_LINEAR
