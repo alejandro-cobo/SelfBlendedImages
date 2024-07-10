@@ -11,7 +11,7 @@ class Detector(nn.Module):
         self.name = name
         if name == 'efficientnet':
             self.net = EfficientNet.from_pretrained(
-                "efficientnet-b4", advprop=True, num_classes=2
+                "efficientnet-b4", advprop=True, num_classes=1
             )
         elif name == 'farl':
             weights_path = os.path.join(hub.get_dir(), 'checkpoints', 'FaRL-Base-Patch16-LAIONFace20M-ep64.pth')
@@ -21,7 +21,7 @@ class Detector(nn.Module):
                     weights_path
                 )
             farl = load_farl('base', weights_path)
-            self.net = nn.Sequential(farl, nn.Linear(farl.output_dim, 2))
+            self.net = nn.Sequential(farl, nn.Linear(farl.output_dim, 1))
         else:
             raise ValueError(name)
 

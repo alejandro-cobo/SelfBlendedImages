@@ -14,6 +14,7 @@ warnings.filterwarnings("ignore")
 
 
 def main(args):
+    print(args)
 
     model = Detector(args.model_name)
     model = model.to(device)
@@ -46,7 +47,8 @@ def main(args):
 
             with torch.no_grad():
                 img = torch.tensor(face_list).to(device).float() / 255
-                pred = model(img).softmax(1)[:, 1]
+                img = (img - 0.5) / 0.5
+                pred = model(img).sigmoid()
 
             pred_list = []
             idx_img = -1
