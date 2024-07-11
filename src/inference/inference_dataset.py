@@ -1,3 +1,4 @@
+import sys
 import torch
 import numpy as np
 import random
@@ -14,7 +15,7 @@ warnings.filterwarnings("ignore")
 
 
 def main(args):
-
+    print(args)
     model = Detector(args.model_name)
     model = model.to(device)
     cnn_sd = torch.load(args.weight_name)["model"]
@@ -60,7 +61,7 @@ def main(args):
                 pred_res[i] = max(pred_list[i])
             pred = pred_res.mean()
         except Exception as e:
-            print(e)
+            print(e, file=sys.stderr)
             pred = 0.5
         output_list.append(pred)
 
