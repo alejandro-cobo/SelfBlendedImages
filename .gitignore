@@ -3,6 +3,8 @@ data/**
 output/
 tags
 src/utils/library/
+train.sh
+test.sh
 *.pyc
 *.pth
 *.tar
