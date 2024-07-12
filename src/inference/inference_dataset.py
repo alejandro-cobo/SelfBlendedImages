@@ -47,7 +47,7 @@ def main(args):
 
             with torch.no_grad():
                 img = torch.tensor(face_list).to(device).float() / 255
-                img = (img - 0.5) / 0.5
+                img = (img - args.mean) / args.std
                 pred = model(img).sigmoid()
 
             pred_list = []
@@ -88,6 +88,8 @@ if __name__ == "__main__":
     parser.add_argument("-d", required=True, dest="dataset", type=str)
     parser.add_argument("-n", dest="n_frames", default=32, type=int)
     parser.add_argument("-i", dest="image_size", default=380, type=int)
+    parser.add_argument("--mean", default=0.0, type=float)
+    parser.add_argument("--std", default=1.0, type=float)
     args = parser.parse_args()
 
     main(args)

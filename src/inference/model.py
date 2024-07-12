@@ -8,7 +8,6 @@ from facer.farl import load_farl
 class Detector(nn.Module):
     def __init__(self, name='efficientnet'):
         super(Detector, self).__init__()
-        self.name = name
         if name == 'efficientnet':
             self.net = EfficientNet.from_pretrained(
                 "efficientnet-b4", advprop=True, num_classes=1
