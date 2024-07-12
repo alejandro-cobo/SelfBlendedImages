@@ -1,8 +1,8 @@
 import os
-from torch import hub
-from torch import nn
+
 from efficientnet_pytorch import EfficientNet
 from facer.farl import load_farl
+from torch import hub, nn
 
 
 class Detector(nn.Module):

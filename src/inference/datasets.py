@@ -87,7 +87,6 @@ def init_dfdcp(phase="test"):
 
 
 def init_ffiw():
-    # assert dataset in ['real','fake']
     path = "data/FFIW/FFIW10K-v1-release/"
     real_list = sorted(glob(path + "source/test/videos/*.mp4"))
     fake_list = sorted(glob(path + "target/test/videos/*.mp4"))
