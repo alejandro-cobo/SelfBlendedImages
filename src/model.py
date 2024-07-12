@@ -1,8 +1,10 @@
 import os
-import torch
-from torch import hub, nn
+
 from efficientnet_pytorch import EfficientNet
 from facer.farl import load_farl
+import torch
+from torch import hub, nn
+
 from utils.sam import SAM
 
 
@@ -24,11 +26,12 @@ class Detector(nn.Module):
             self.net = nn.Sequential(farl, nn.Linear(farl.output_dim, 1))
         else:
             raise ValueError(name)
-        self.cel = nn.CrossEntropyLoss()
+        self.cel = nn.BCEWithLogitsLoss()
         self.optimizer = SAM(self.parameters(), torch.optim.SGD, lr=0.001, momentum=0.9)
 
     def forward(self, x):
         x = self.net(x)
+        x = x.squeeze(dim=1)
         return x
 
     def training_step(self, x, target):

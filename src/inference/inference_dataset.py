@@ -1,3 +1,4 @@
+import sys
 import torch
 import numpy as np
 import random
@@ -62,7 +63,7 @@ def main(args):
                 pred_res[i] = max(pred_list[i])
             pred = pred_res.mean()
         except Exception as e:
-            print(e)
+            print(e, file=sys.stderr)
             pred = 0.5
         output_list.append(pred)
 

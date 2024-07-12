@@ -101,7 +101,7 @@ def main(args):
             loss_value = loss.item()
             iter_loss.append(loss_value)
             train_loss += loss_value
-            acc = compute_accuray(F.log_softmax(output, dim=1), target)
+            acc = compute_accuray(output.sigmoid(), target)
             train_acc += acc
         lr_scheduler.step()
         train_losses.append(train_loss / len(train_loader))
@@ -131,9 +131,9 @@ def main(args):
             loss_value = loss.item()
             iter_loss.append(loss_value)
             val_loss += loss_value
-            acc = compute_accuray(F.log_softmax(output, dim=1), target)
+            acc = compute_accuray(output.sigmoid(), target)
             val_acc += acc
-            output_dict += output.softmax(1)[:, 1].cpu().data.numpy().tolist()
+            output_dict += output.sigmoid().cpu().data.numpy().tolist()
             target_dict += target.cpu().data.numpy().tolist()
         val_losses.append(val_loss / len(val_loader))
         val_accs.append(val_acc / len(val_loader))
